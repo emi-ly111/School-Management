@@ -24,11 +24,17 @@ public class MainView extends JFrame implements StyleAttributes {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     StudentView studentView = new StudentView(studentsList);
+    ProfessorView professorView = new ProfessorView(professorsList);
 
     this.studentsList.add(new Student("Estudante 1", 10, "123"));
     this.studentsList.add(new Student("Estudante 2", 10, "456"));
     this.studentsList.add(new Student("Estudante 3", 10, "789"));
     this.studentsList.add(new Student("Estudante 4", 10, "101"));
+
+    this.professorsList.add(new Professor("Professor 1", 20, "Matemática"));
+    this.professorsList.add(new Professor("Professor 2", 20, "Física"));
+    this.professorsList.add(new Professor("Professor 3", 20, "Biologia"));
+    this.professorsList.add(new Professor("Professor 4", 20, "Artes"));
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -56,8 +62,7 @@ public class MainView extends JFrame implements StyleAttributes {
     coursesButton.setBounds(getScreenMiddleX(screenSize.width, 150), 150, 150, 20);
 
     studentsButton.addActionListener(e -> studentView.openStudentsModal());
-
-
+    professorsButton.addActionListener(e -> professorView.openProfessorModal());
 
     panel.add(title);
 
