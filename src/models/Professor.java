@@ -10,9 +10,10 @@ public class Professor extends Person{
 		this.registration = registration;
 	}
 	
-	public Professor(String name, int age, String specialty) {
+	public Professor(String name, int age, String specialty, String registration) {
 		super (name, age);
 		this.specialty = specialty;
+		this.registration = registration;
 	}
 	
 	public String getSpecialty() {

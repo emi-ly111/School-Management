@@ -87,30 +87,28 @@ public class StudentView extends JFrame implements StyleAttributes{
     JButton saveButton = new JButton("Salvar Alterações");
     saveButton.setBounds(170, 520, 150, 30);
     saveButton.addActionListener(e -> {
-      this.addStudentToList(studentAgeInput, searchStudentInput, studentRegistrationInput);
+      this.addStudentToList(studentNameInput, studentAgeInput, studentRegistrationInput);
 
+      for (Component component : studentsScrollablePanel.getComponents()) {          
 
+          if (component instanceof JPanel) {
+              JPanel studentItemPanel = (JPanel) component;
 
-    for (Component component : studentsScrollablePanel.getComponents()) {          
+      
+              JTextField nameField = (JTextField) studentItemPanel.getComponent(1);
+              JTextField ageField = (JTextField) studentItemPanel.getComponent(3);
+              JTextField registrationField = (JTextField) studentItemPanel.getComponent(5);
 
-        if (component instanceof JPanel) {
-            JPanel studentItemPanel = (JPanel) component;
-
-    
-            JTextField nameField = (JTextField) studentItemPanel.getComponent(1);
-            JTextField ageField = (JTextField) studentItemPanel.getComponent(3);
-            JTextField registrationField = (JTextField) studentItemPanel.getComponent(5);
-
-    
-            int index = studentsScrollablePanel.getComponentZOrder(studentItemPanel);
-            Student student = studentsList.get(index);
-    
-            student.setName(nameField.getText());
-            student.setAge(Integer.parseInt(ageField.getText()));
-            student.setRegistration(registrationField.getText());
-        }
-    }
-        JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
+      
+              int index = studentsScrollablePanel.getComponentZOrder(studentItemPanel);
+              Student student = studentsList.get(index);
+      
+              student.setName(nameField.getText());
+              student.setAge(Integer.parseInt(ageField.getText()));
+              student.setRegistration(registrationField.getText());
+          }
+      }
+          JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
     });
 
 

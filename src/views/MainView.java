@@ -31,10 +31,10 @@ public class MainView extends JFrame implements StyleAttributes {
     this.studentsList.add(new Student("Estudante 3", 10, "789"));
     this.studentsList.add(new Student("Estudante 4", 10, "101"));
 
-    this.professorsList.add(new Professor("Professor 1", 20, "Matemática"));
-    this.professorsList.add(new Professor("Professor 2", 20, "Física"));
-    this.professorsList.add(new Professor("Professor 3", 20, "Biologia"));
-    this.professorsList.add(new Professor("Professor 4", 20, "Artes"));
+    this.professorsList.add(new Professor("Professor 1", 20, "Matemática", "123"));
+    this.professorsList.add(new Professor("Professor 2", 20, "Física", "456"));
+    this.professorsList.add(new Professor("Professor 3", 20, "Biologia", "789"));
+    this.professorsList.add(new Professor("Professor 4", 20, "Artes", "101"));
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
