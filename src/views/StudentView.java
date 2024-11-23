@@ -5,7 +5,6 @@ import javax.swing.*;
 import src.models.Student;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -132,12 +131,6 @@ public class StudentView extends JFrame implements StyleAttributes{
     modal.setLocationRelativeTo(this);
 
     modal.setVisible(true);
-  }
-
-  
-
-  public static int getScreenMiddleX(int screenSize, int componentSize) {
-    return (screenSize - componentSize) / 2;
   }
 
   private void addStudentToList(JTextField inputName, JTextField inputAge, JTextField inputRegistration) {
@@ -280,6 +273,10 @@ public class StudentView extends JFrame implements StyleAttributes{
       studentsScrollablePanel.revalidate();
       studentsScrollablePanel.repaint();
     }
+  }
+
+  public static int getScreenMiddleX(int screenSize, int componentSize) {
+    return (screenSize - componentSize) / 2;
   }
 
 }
