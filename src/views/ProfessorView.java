@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 public class ProfessorView extends JFrame implements StyleAttributes {
@@ -89,6 +90,8 @@ public class ProfessorView extends JFrame implements StyleAttributes {
 
     JButton addProfessorButton = new JButton("Adicionar professor");    
     addProfessorButton.setBounds(getScreenMiddleX(450, 150), 270, 150, 20);
+
+    addProfessorButton.addActionListener(e -> this.addProfessorToList(professorNameInput, professorAgeInput, professorRegistrationInput, specialtiesDropdown));
     
     JLabel searchProfessorSection = new JLabel("Pesquise por um professor:");
 
@@ -98,6 +101,47 @@ public class ProfessorView extends JFrame implements StyleAttributes {
     JTextField searchProfessorInput = new JTextField();
     searchProfessorInput.setBounds(10, 315, 200, 20);
 
+    searchProfessorInput.addActionListener(e -> this.searchProfessor(searchProfessorInput));
+
+    professorsScrollablePanel = new JPanel();
+    professorsScrollablePanel.setLayout(new BoxLayout(professorsScrollablePanel, BoxLayout.Y_AXIS));
+    professorsScrollablePanel.setBackground(Color.WHITE);
+    
+
+    for(Professor professor : professorsList) {
+      JPanel professorItemPanel = createEditableProfessorPanel(professor);
+      professorsScrollablePanel.add(professorItemPanel);
+    }
+
+    professorsScrollPane = new JScrollPane(professorsScrollablePanel);
+    professorsScrollPane.setBounds(10, 340, 600, 200);
+    professorsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+    JButton saveButton = new JButton("Salvar Alterações");
+    saveButton.setBounds(170, 520, 150, 30);
+    saveButton.addActionListener(e -> {
+      this.addProfessorToList(professorAgeInput, professorAgeInput, professorRegistrationInput, specialtiesDropdown);
+
+      for (Component component : professorsScrollablePanel.getComponents()) {          
+
+          if (component instanceof JPanel) {
+              JPanel professorItemPanel = (JPanel) component;
+      
+              JTextField nameField = (JTextField) professorItemPanel.getComponent(1);
+              JTextField ageField = (JTextField) professorItemPanel.getComponent(3);
+              JTextField registrationField = (JTextField) professorItemPanel.getComponent(5);
+              
+      
+              int index = professorsScrollablePanel.getComponentZOrder(professorItemPanel);
+              Professor professor = professorsList.get(index);
+      
+              professor.setName(nameField.getText());
+              professor.setAge(Integer.parseInt(ageField.getText()));
+              professor.setRegistration(registrationField.getText());
+          }
+      }
+          JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
+    });
 
     modal.add(addProfessorTitle);
     modal.add(professorNameLabel);
@@ -109,17 +153,60 @@ public class ProfessorView extends JFrame implements StyleAttributes {
     modal.add(professorSpecialtyLabel);
     modal.add(specialtiesDropdown);
     modal.add(addProfessorButton);
+    modal.add(searchProfessorSection);
+    modal.add(searchProfessorInput);
+    modal.add(professorsScrollPane);
 
     modal.setLocationRelativeTo(this);
 
     modal.setVisible(true);
   }
 
+  private void addProfessorToList(JTextField inputName, JTextField inputAge, JTextField inputRegistration, JComboBox<String> inputSpecialty) {
+    String professorToAddName = inputName.getText();
+    String professorToAddAge = inputAge.getText();
+    String professorToAddRegistration = inputRegistration.getText();
+    String professorToAddSpecialty = inputSpecialty.getSelectedItem().toString();
+
+    boolean isNameNotNull = professorToAddName != null;
+    boolean isAgeNotNull = professorToAddAge != null;
+    boolean isRegistrationNotNull = professorToAddRegistration != null;
+    boolean isSpecialtyNotNull = professorToAddSpecialty != null;
+
+    boolean isNameNotBlank = !professorToAddName.isBlank();
+    boolean isAgeNotBlank = !professorToAddAge.isBlank();
+    boolean isRegistrationNotBlank = !professorToAddRegistration.isBlank();
+    boolean isSpecialtyNotBlank = !professorToAddSpecialty.isBlank();
+
+    boolean isNameValid = isNameNotNull && isNameNotBlank;
+    boolean isAgeValid = isAgeNotNull && isAgeNotBlank;
+    boolean isRegistrationValid = isRegistrationNotNull && isRegistrationNotBlank;
+    boolean isSpecialtyValid = isSpecialtyNotNull && isSpecialtyNotBlank;
+
+    if(isNameValid && isAgeValid && isRegistrationValid && isSpecialtyValid) {
+      Professor newProfessor = new Professor(professorToAddName, Integer.parseInt(professorToAddAge), professorToAddSpecialty, professorToAddRegistration);
+
+      this.professorsList.add(newProfessor);
+
+      JPanel newProfessorPanel = createEditableProfessorPanel(newProfessor);
+      professorsScrollablePanel.add(newProfessorPanel);
+
+      professorsScrollablePanel.revalidate();
+      professorsScrollablePanel.repaint();
+    }
+
+    inputName.setText("");
+    inputAge.setText("");
+    inputRegistration.setText("");
+    inputSpecialty.setSelectedItem(this.specialties.toArray()[0]);
+  } 
+
     private JPanel createEditableProfessorPanel(Professor professor) {
     JPanel professorItemPanel = new JPanel();
     professorItemPanel.setLayout(new GridBagLayout());
+    professorItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     GridBagConstraints gbc = new GridBagConstraints();
-    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.insets = new Insets(10, 10, 10, 10);
     gbc.fill = GridBagConstraints.HORIZONTAL;
 
   
@@ -187,17 +274,73 @@ public class ProfessorView extends JFrame implements StyleAttributes {
     return professorItemPanel;
   }
 
-  private void removeProfessor(Professor professor) {
-    int professorIndex = this.professorsList.indexOf(professor);
+    private void searchProfessor(JTextField searchProfessorInput) {
+    String searchInput = searchProfessorInput.getText();
 
-    if(professorIndex >= 0) {
-      professorsList.remove(professorIndex);
-      professorsScrollablePanel.remove(professorIndex);
+    if(searchInput != null && !searchInput.isEmpty()) {      
+      Stream<Professor> filteredProfessorsStream = this.professorsList.stream().filter(professor -> {
+        boolean isNameEqual = professor.getName().equals(searchInput);
+        boolean isRegistrationEqual = professor.getRegistration().equals(searchInput);
+
+        return isNameEqual || isRegistrationEqual;
+      });
+
+      professorsScrollablePanel.removeAll();
+
+      List<Professor> filteredProfessorsList = filteredProfessorsStream.toList();            
+
+      for(Professor professor : filteredProfessorsList) {
+        JPanel filteredProfessor = this.createEditableProfessorPanel(professor);
+
+        professorsScrollablePanel.add(filteredProfessor);
+      }
+      
+      professorsScrollablePanel.revalidate();
+      professorsScrollablePanel.repaint();
+    } else {      
+      professorsScrollablePanel.removeAll();
+      for(Professor professor : this.professorsList) {        
+
+        JPanel studentPane = this.createEditableProfessorPanel(professor);
+
+        professorsScrollablePanel.add(studentPane);
+      }
 
       professorsScrollablePanel.revalidate();
       professorsScrollablePanel.repaint();
     }
   }
+
+
+  private void removeProfessor(Professor professor) {
+  
+    Component componentToRemove = null;
+
+    for (Component component : professorsScrollablePanel.getComponents()) {
+        if (component instanceof JPanel) {
+            JPanel professorItemPanel = (JPanel) component;
+
+          
+            JTextField nameField = (JTextField) professorItemPanel.getComponent(1);
+
+          
+            if (nameField.getText().equals(professor.getName())) {
+                componentToRemove = component;
+                break;
+            }
+        }
+    }
+
+  
+    if (componentToRemove != null) {
+        professorsList.remove(professor);
+        professorsScrollablePanel.remove(componentToRemove);
+
+        professorsScrollablePanel.revalidate();
+        professorsScrollablePanel.repaint();
+    }
+}
+
 
   public static int getScreenMiddleX(int screenSize, int componentSize) {
     return (screenSize - componentSize) / 2;
