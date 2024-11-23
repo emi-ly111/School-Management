@@ -2,6 +2,7 @@ package src.views;
 
 import javax.swing.*;
 
+import src.models.Professor;
 import src.models.Student;
 
 import java.awt.*;
@@ -15,6 +16,7 @@ public class MainView extends JFrame implements StyleAttributes {
   private JScrollPane studentsScrollPane;
 
   List<Student> studentsList = new ArrayList<>();
+  List<Professor> professorsList = new ArrayList<>();
 
 
   public MainView() {
@@ -70,6 +72,4 @@ public class MainView extends JFrame implements StyleAttributes {
   private int getScreenMiddleX(int screenSize, int componentSize) {
     return (screenSize - componentSize) / 2;
   }
-
-  
 }

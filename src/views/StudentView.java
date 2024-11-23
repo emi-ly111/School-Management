@@ -5,8 +5,10 @@ import javax.swing.*;
 import src.models.Student;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class StudentView extends JFrame implements StyleAttributes{
 
@@ -58,116 +60,118 @@ public class StudentView extends JFrame implements StyleAttributes{
     JButton addStudentButton = new JButton("Adicionar aluno");    
     addStudentButton.setBounds(getScreenMiddleX(450, 150), 210, 150, 20);
     
-        addStudentButton.addActionListener(e -> this.addStudentToList(studentNameInput, studentAgeInput, studentRegistrationInput));
+    addStudentButton.addActionListener(e -> this.addStudentToList(studentNameInput, studentAgeInput, studentRegistrationInput));
+
+    JLabel searchStudentSection = new JLabel("Pesquise por um aluno:");
+
+    searchStudentSection.setFont(new Font(this.fontFamily, Font.BOLD, this.subTitleFontSize));
+    searchStudentSection.setBounds(10, 240, 300, 25);
+
+    JTextField searchStudentInput = new JTextField();
+    searchStudentInput.setBounds(10, 270, 200, 20);
+
+    searchStudentInput.addActionListener(e -> this.searchStudent(searchStudentInput));
+
+    studentsScrollablePanel = new JPanel();
+    studentsScrollablePanel.setLayout(new BoxLayout(studentsScrollablePanel, BoxLayout.Y_AXIS));
+    studentsScrollablePanel.setBackground(Color.WHITE);
+
+    for (Student student : studentsList) {
+      JPanel studentItemPanel = createEditableStudentPanel(student);
+      studentsScrollablePanel.add(studentItemPanel);
+    }
+
+    studentsScrollPane = new JScrollPane(studentsScrollablePanel);
+    studentsScrollPane.setBounds(10, 295, 600, 100);
+    studentsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+    JButton saveButton = new JButton("Salvar Alterações");
+    saveButton.setBounds(170, 520, 150, 30);
+    saveButton.addActionListener(e -> {
+      this.addStudentToList(studentAgeInput, searchStudentInput, studentRegistrationInput);
+
+
+
+    for (Component component : studentsScrollablePanel.getComponents()) {          
+
+        if (component instanceof JPanel) {
+            JPanel studentItemPanel = (JPanel) component;
+
     
-        JLabel searchStudentSection = new JLabel("Pesquise por um aluno:");
+            JTextField nameField = (JTextField) studentItemPanel.getComponent(1);
+            JTextField ageField = (JTextField) studentItemPanel.getComponent(3);
+            JTextField registrationField = (JTextField) studentItemPanel.getComponent(5);
+
     
-        searchStudentSection.setFont(new Font(this.fontFamily, Font.BOLD, this.subTitleFontSize));
-        searchStudentSection.setBounds(10, 240, 300, 25);
+            int index = studentsScrollablePanel.getComponentZOrder(studentItemPanel);
+            Student student = studentsList.get(index);
     
-        JTextField searchStudentInput = new JTextField();
-        searchStudentInput.setBounds(10, 270, 200, 20);
-    
-        studentsScrollablePanel = new JPanel();
-        studentsScrollablePanel.setLayout(new BoxLayout(studentsScrollablePanel, BoxLayout.Y_AXIS));
-        studentsScrollablePanel.setBackground(Color.WHITE);
-    
-        for (Student student : studentsList) {
-          JPanel studentItemPanel = createEditableStudentPanel(student);
-          studentsScrollablePanel.add(studentItemPanel);
+            student.setName(nameField.getText());
+            student.setAge(Integer.parseInt(ageField.getText()));
+            student.setRegistration(registrationField.getText());
         }
-    
-        studentsScrollPane = new JScrollPane(studentsScrollablePanel);
-        studentsScrollPane.setBounds(10, 295, 600, 100);
-        studentsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    
-        JButton saveButton = new JButton("Salvar Alterações");
-        saveButton.setBounds(170, 520, 150, 30);
-        saveButton.addActionListener(e -> {
-          this.addStudentToList(studentAgeInput, searchStudentInput, studentRegistrationInput);
-    
-    
-    
-            for (Component component : studentsScrollablePanel.getComponents()) {          
-    
-                if (component instanceof JPanel) {
-                    JPanel studentItemPanel = (JPanel) component;
-    
-            
-                    JTextField nameField = (JTextField) studentItemPanel.getComponent(1);
-                    JTextField ageField = (JTextField) studentItemPanel.getComponent(3);
-                    JTextField registrationField = (JTextField) studentItemPanel.getComponent(5);
-    
-            
-                    int index = studentsScrollablePanel.getComponentZOrder(studentItemPanel);
-                    Student student = studentsList.get(index);
-            
-                    student.setName(nameField.getText());
-                    student.setAge(Integer.parseInt(ageField.getText()));
-                    student.setRegistration(registrationField.getText());
-                }
-            }
-            JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
-        });
-    
-    
-    
-        modal.add(addStudentTitle);
-        modal.add(studentNameLabel);
-        modal.add(studentNameInput);
-        modal.add(studentAgeLabel);
-        modal.add(studentAgeInput);
-        modal.add(studentRegistrationLabel);
-        modal.add(studentRegistrationInput);
-        modal.add(addStudentButton);
-        modal.add(searchStudentSection);
-        modal.add(searchStudentInput);
-        modal.add(studentsScrollPane);
-        modal.add(saveButton);
-    
-        modal.setLocationRelativeTo(this);
-    
-        modal.setVisible(true);
-      }
-    
-     
-    
-      public static int getScreenMiddleX(int screenSize, int componentSize) {
-        return (screenSize - componentSize) / 2;
-      }
-    
-      private void addStudentToList(JTextField inputName, JTextField inputAge, JTextField inputRegistration) {
+    }
+        JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
+    });
+
+
+
+    modal.add(addStudentTitle);
+    modal.add(studentNameLabel);
+    modal.add(studentNameInput);
+    modal.add(studentAgeLabel);
+    modal.add(studentAgeInput);
+    modal.add(studentRegistrationLabel);
+    modal.add(studentRegistrationInput);
+    modal.add(addStudentButton);
+    modal.add(searchStudentSection);
+    modal.add(searchStudentInput);
+    modal.add(studentsScrollPane);
+    modal.add(saveButton);
+
+    modal.setLocationRelativeTo(this);
+
+    modal.setVisible(true);
+  }
+
+  
+
+  public static int getScreenMiddleX(int screenSize, int componentSize) {
+    return (screenSize - componentSize) / 2;
+  }
+
+  private void addStudentToList(JTextField inputName, JTextField inputAge, JTextField inputRegistration) {
     String studentToAddName = inputName.getText();
-        String studentToAddAge = inputAge.getText();
-        String studentToAddRegistration = inputRegistration.getText();
+    String studentToAddAge = inputAge.getText();
+    String studentToAddRegistration = inputRegistration.getText();
 
-        boolean isNameNotNull = studentToAddName != null;
-        boolean isAgeNotNull = studentToAddAge != null;
-        boolean isRegistrationNotNull = studentToAddRegistration != null;
+    boolean isNameNotNull = studentToAddName != null;
+    boolean isAgeNotNull = studentToAddAge != null;
+    boolean isRegistrationNotNull = studentToAddRegistration != null;
 
-        boolean isNameNotBlank = !studentToAddName.isBlank();
-        boolean isAgeNotBlank = !studentToAddAge.isBlank();
-        boolean isRegistrationNotBlank = !studentToAddRegistration.isBlank();
+    boolean isNameNotBlank = !studentToAddName.isBlank();
+    boolean isAgeNotBlank = !studentToAddAge.isBlank();
+    boolean isRegistrationNotBlank = !studentToAddRegistration.isBlank();
 
-        boolean isNameValid = isNameNotNull && isNameNotBlank;
-        boolean isAgeValid = isAgeNotNull && isAgeNotBlank;
-        boolean isRegistrationValid = isRegistrationNotNull && isRegistrationNotBlank;
+    boolean isNameValid = isNameNotNull && isNameNotBlank;
+    boolean isAgeValid = isAgeNotNull && isAgeNotBlank;
+    boolean isRegistrationValid = isRegistrationNotNull && isRegistrationNotBlank;
 
-        if(isNameValid && isAgeValid && isRegistrationValid) {
-          Student newStudent = new Student(studentToAddName, Integer.parseInt(studentToAddAge), studentToAddRegistration);
+    if(isNameValid && isAgeValid && isRegistrationValid) {
+      Student newStudent = new Student(studentToAddName, Integer.parseInt(studentToAddAge), studentToAddRegistration);
 
-          this.studentsList.add(newStudent);
+      this.studentsList.add(newStudent);
 
-          JPanel newStudentPanel = createEditableStudentPanel(newStudent);
-          studentsScrollablePanel.add(newStudentPanel);
+      JPanel newStudentPanel = createEditableStudentPanel(newStudent);
+      studentsScrollablePanel.add(newStudentPanel);
 
-          studentsScrollablePanel.revalidate();
-          studentsScrollablePanel.repaint();
-        }
+      studentsScrollablePanel.revalidate();
+      studentsScrollablePanel.repaint();
+    }
 
-        inputName.setText("");
-        inputAge.setText("");
-        inputRegistration.setText("");
+    inputName.setText("");
+    inputAge.setText("");
+    inputRegistration.setText("");
   } 
 
   private JPanel createEditableStudentPanel(Student student) {
@@ -226,8 +230,45 @@ public class StudentView extends JFrame implements StyleAttributes{
     studentItemPanel.add(removeStudentButton, gbc);
 
     return studentItemPanel;
-}
+  }
 
+
+  private void searchStudent(JTextField searchStudentInput) {
+    String searchInput = searchStudentInput.getText();
+
+    if(searchInput != null && !searchInput.isEmpty()) {      
+      Stream<Student> filteredStudentsStream = this.studentsList.stream().filter(student -> {
+        boolean isNameEqual = student.getName().equals(searchInput);
+        boolean isRegistrationEqual = student.getRegistration().equals(searchInput);
+
+        return isNameEqual || isRegistrationEqual;
+      });
+
+      studentsScrollablePanel.removeAll();
+
+      List<Student> filteredStudentsList = filteredStudentsStream.toList();            
+
+      for(Student student : filteredStudentsList) {
+        JPanel filteredStudent = this.createEditableStudentPanel(student);
+
+        studentsScrollablePanel.add(filteredStudent);
+      }
+      
+      studentsScrollablePanel.revalidate();
+      studentsScrollablePanel.repaint();
+    } else {      
+      studentsScrollablePanel.removeAll();
+      for(Student student : this.studentsList) {        
+
+        JPanel studentPane = this.createEditableStudentPanel(student);
+
+        studentsScrollablePanel.add(studentPane);
+      }
+
+      studentsScrollablePanel.revalidate();
+      studentsScrollablePanel.repaint();
+    }
+  }
 
   private void removeStudent(Student student) {
     int studentIndex = this.studentsList.indexOf(student);
