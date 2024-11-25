@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17
+    container_name: postgres_poo
+    environment:
+      POSTGRES_DB: Vai_filhao
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ja_fui
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
