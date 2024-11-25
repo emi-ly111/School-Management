@@ -3,7 +3,6 @@ package src.views;
 import javax.swing.*;
 
 import src.models.Professor;
-import src.models.Student;
 
 import java.awt.*;
 import java.util.ArrayList;
