@@ -4,22 +4,22 @@ CREATE DATABASE school_management;
 
 CREATE TABLE student (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    idade VARCHAR(200) NOT NULL,
-    matricula VARCHAR(20) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL,
+    age VARCHAR(200) NOT NULL,
+    registration VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE professor (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    idade VARCHAR(200) NOT NULL,
-    especialidade VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    age VARCHAR(200) NOT NULL,
+    specialty VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE course (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL UNIQUE,
-    carga_horaria INT NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    course_load INT NOT NULL,
     professor_id INT REFERENCES professor(id) ON DELETE SET NULL -- Define que, caso o professor seja excluído, o campo professor_id será NULL
 );
 
@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION InsertStudents(new_nome VARCHAR(255), new_idade VARCH
 DECLARE
     student_id INT;
 BEGIN
-    INSERT INTO student (nome, idade, matricula) VALUES (new_nome, new_idade, new_matricula) RETURNING id INTO student_id;
+    INSERT INTO student (name, age, registration) VALUES (new_nome, new_idade, new_matricula) RETURNING id INTO student_id;
 
     RAISE NOTICE 'Inserção realizada com sucesso: % - %', student_id, new_matricula;
 END;
@@ -43,10 +43,8 @@ $vai$ LANGUAGE plpgsql;
 
 --
 CREATE OR REPLACE FUNCTION InsertTeacher(new_nome VARCHAR(255), new_idade VARCHAR(200), new_especialidade VARCHAR(255)) RETURNS VOID AS $vai$
-DECLARE
-    teacher_id INT;
 BEGIN
-    INSERT INTO professor (nome, especialidade, idade) VALUES (new_nome, new_especialidade, new_idade) RETURNING id INTO teacher_id;
+    INSERT INTO professor (name, specialty, age) VALUES (new_nome, new_especialidade, new_idade) RETURNING id INTO teacher_id;
 
     RAISE NOTICE 'Inserção realizada com sucesso: % - %', teacher_id, new_especialidade;
 END;
@@ -60,7 +58,7 @@ DECLARE
 BEGIN
     SELECT EXISTS(SELECT id FROM professor WHERE id = professor_id) INTO exist;
     IF exist THEN
-        INSERT INTO course (nome, carga_horaria, professor_id) VALUES (new_nome, new_carga_horaria, professor_id) RETURNING nome INTO nome_course;
+        INSERT INTO course (name, course_load, professor_id) VALUES (new_nome, new_carga_horaria, professor_id) RETURNING name INTO nome_course;
         RAISE NOTICE 'Inserção realizada com sucesso: % - %', nome_course, new_carga_horaria;
     ELSE
         RAISE NOTICE 'Professor não encontrado: %', professor_id;
@@ -144,7 +142,7 @@ BEGIN
         SELECT EXISTS(SELECT id FROM professor WHERE id = new_professor_id) INTO exist_teacher;
         IF exist_teacher THEN
             UPDATE course
-            SET nome = new_nome, carga_horaria = new_carga_horaria, professor_id = new_professor_id
+            SET name = new_nome, course_load = new_carga_horaria, professor_id = new_professor_id
             WHERE id = course_id;
         ELSE
             RAISE NOTICE 'O professor com o id=% não existe', new_professor_id;
@@ -190,7 +188,7 @@ BEGIN
     SELECT EXISTS(SELECT id FROM professor WHERE id = teacher_id) INTO exist;
     IF exist THEN
         UPDATE professor
-        SET idade = new_idade, nome = new_nome, especialidade = new_especialidade
+        SET age = new_idade, name = new_nome, specialty = new_especialidade
         WHERE id = teacher_id;
         RAISE NOTICE 'Registro atualizado com sucesso.';
     ELSE
@@ -207,7 +205,7 @@ BEGIN
     SELECT EXISTS(SELECT id FROM student WHERE id = student_id) INTO exist;
     IF exist THEN
         UPDATE student
-        SET idade = new_idade, nome = new_nome, matricula = new_matricula
+        SET age = new_idade, name = new_nome, registration = new_matricula
         WHERE id = student_id;
         RAISE NOTICE 'Registro atualizado com sucesso.';
     ELSE
