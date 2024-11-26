@@ -2,6 +2,7 @@ package src.views;
 
 import javax.swing.*;
 
+import src.controllers.StudentController;
 import src.models.Student;
 
 import java.awt.*;
@@ -11,8 +12,10 @@ import java.util.stream.Stream;
 
 public class StudentView extends JFrame implements StyleAttributes{
 
-  private List<Student> studentsList = new ArrayList<>();
-
+  
+  private StudentController studentController = new StudentController();
+  
+  private List<Student> studentsList = studentController.getAllStudents();
   private JPanel studentsScrollablePanel;
   private JScrollPane studentsScrollPane;
 
@@ -93,7 +96,6 @@ public class StudentView extends JFrame implements StyleAttributes{
 
           if (component instanceof JPanel) {
               JPanel studentItemPanel = (JPanel) component;
-
       
               JTextField nameField = (JTextField) studentItemPanel.getComponent(1);
               JTextField ageField = (JTextField) studentItemPanel.getComponent(3);
@@ -103,9 +105,12 @@ public class StudentView extends JFrame implements StyleAttributes{
               int index = studentsScrollablePanel.getComponentZOrder(studentItemPanel);
               Student student = studentsList.get(index);
       
+              
               student.setName(nameField.getText());
               student.setAge(Integer.parseInt(ageField.getText()));
               student.setRegistration(registrationField.getText());
+                            
+              this.studentController.updateStudent(student);
           }
       }
           JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
@@ -152,9 +157,12 @@ public class StudentView extends JFrame implements StyleAttributes{
       Student newStudent = new Student(studentToAddName, Integer.parseInt(studentToAddAge), studentToAddRegistration);
 
       this.studentsList.add(newStudent);
+      studentController.addStudent(newStudent);
 
       JPanel newStudentPanel = createEditableStudentPanel(newStudent);
       studentsScrollablePanel.add(newStudentPanel);
+
+      this.studentController.addStudent(newStudent);
 
       studentsScrollablePanel.revalidate();
       studentsScrollablePanel.repaint();
@@ -267,7 +275,7 @@ public class StudentView extends JFrame implements StyleAttributes{
     if(studentIndex >= 0) {
       studentsList.remove(studentIndex);
       studentsScrollablePanel.remove(studentIndex);
-
+      this.studentController.deleteStudent(student.getId());
       studentsScrollablePanel.revalidate();
       studentsScrollablePanel.repaint();
     }

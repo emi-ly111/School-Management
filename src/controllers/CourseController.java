@@ -18,7 +18,7 @@ public class CourseController {
 
             pstmt.setString(1, course.getName());
             pstmt.setInt(2, course.getCourseLoad());
-            pstmt.setString(3, course.getProfessor().getId());
+            pstmt.setInt(3, course.getProfessor().getId());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -36,8 +36,8 @@ public class CourseController {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Professor professor = new Professor(rs.getString("id"), rs.getString("name"), rs.getInt("age"), rs.getString("specialty"), rs.getString("registration"));
-                Course course = new Course(rs.getString("id"), rs.getString("name"), rs.getInt("course_load"), professor);
+                Professor professor = new Professor(rs.getInt("id"), rs.getString("name"), rs.getInt("age"), rs.getString("specialty"), rs.getString("registration"));
+                Course course = new Course(rs.getInt("id"), rs.getString("name"), rs.getInt("course_load"), professor);
                 courses.add(course);
             }
 
@@ -56,8 +56,8 @@ public class CourseController {
 
             pstmt.setString(1, course.getName());
             pstmt.setInt(2, course.getCourseLoad());
-            pstmt.setString(3, course.getProfessor().getId());
-            pstmt.setString(4, course.getId());
+            pstmt.setInt(3, course.getProfessor().getId());
+            pstmt.setInt(4, course.getId());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

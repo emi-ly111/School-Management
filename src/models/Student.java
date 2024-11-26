@@ -3,7 +3,7 @@ package src.models;
 public class Student extends Person {
 	private String registration;
 	
-	public Student(String id, String name, int age, String registration) {
+	public Student(int id, String name, int age, String registration) {
 		super(id, name, age);
 		this.registration = registration;
 	}

@@ -2,15 +2,18 @@ package src.models;
 
 import java.util.List;
 
+import src.controllers.CourseController;
+
 
 public class Course {
-	private String id;
+	private int id;
 	private String name;
 	private int courseLoad;
 	private Professor professor;
-	private List<String> subscribedUsersId; 
+	private CourseController courseController = new CourseController();
+	private List<String> subscribedStudentsId; 
 	
-	public Course(String id, String name, int courseLoad, Professor professor) {
+	public Course(int id, String name, int courseLoad, Professor professor) {
 		this.id = id;
 		this.name = name;
 		this.courseLoad = courseLoad;
@@ -25,26 +28,27 @@ public class Course {
 	
 	
 	public void subscribeUserToCourse(String userId) {
-		boolean userAlreadyInList = this.subscribedUsersId.contains(userId);
+		boolean userAlreadyInList = this.subscribedStudentsId.contains(userId);
 		
 		if(userAlreadyInList) {
 			return;
 		}
 		
-		this.subscribedUsersId.add(userId);
+		this.subscribedStudentsId.add(userId);
+		
 	}
 	
 	public void unsubscribeUserFromCourse(String userId) {
-		boolean isUserAlreadyOutOfCourse = !this.subscribedUsersId.contains(userId);
+		boolean isUserAlreadyOutOfCourse = !this.subscribedStudentsId.contains(userId);
 		
 		if(isUserAlreadyOutOfCourse) {
 			return;
 		}
 		
-		this.subscribedUsersId.remove(userId);
+		this.subscribedStudentsId.remove(userId);
 	}
 	
-	public String getId() {
+	public int getId() {
 		return this.id;
 	}
 	
@@ -60,11 +64,11 @@ public class Course {
 		return this.professor;
 	}
 	
-	public List<String> getSubscribedUsersIds() {
-		return this.subscribedUsersId;
+	public List<String> getSubscribedStudentsIds() {
+		return this.subscribedStudentsId;
 	}
 	
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	

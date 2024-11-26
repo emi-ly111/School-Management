@@ -19,7 +19,7 @@ public class ProfessorController {
 
             while (rs.next()) {
                 Professor professor = new Professor(
-                        rs.getString("id"),
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getInt("age"),
                         rs.getString("specialty"),
@@ -45,7 +45,7 @@ public class ProfessorController {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new Professor(
-                            rs.getString("id"),
+                            rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("age"),
                             rs.getString("specialty"),
@@ -61,16 +61,14 @@ public class ProfessorController {
     }
 
     public boolean addProfessor(Professor professor) {
-        String sql = "INSERT INTO professors (id, name, age, specialty, registration) VALUES (?, ?, ?, ?, ?)";
+        String sql = "SELECT InsertTeacher(?, ?, '?); ";
 
         try (Connection conn = DataBase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, professor.getId());
-            pstmt.setString(2, professor.getName());
-            pstmt.setInt(3, professor.getAge());
-            pstmt.setString(4, professor.getSpecialty());
-            pstmt.setString(5, professor.getRegistration());
+            pstmt.setString(1, professor.getName());
+            pstmt.setInt(2, professor.getAge());
+            pstmt.setString(3, professor.getSpecialty());
 
             return pstmt.executeUpdate() > 0;
 
@@ -91,7 +89,7 @@ public class ProfessorController {
             pstmt.setInt(2, professor.getAge());
             pstmt.setString(3, professor.getSpecialty());
             pstmt.setString(4, professor.getRegistration());
-            pstmt.setString(5, professor.getId());
+            pstmt.setInt(5, professor.getId());
 
             return pstmt.executeUpdate() > 0;
 
@@ -102,13 +100,13 @@ public class ProfessorController {
         return false;
     }
 
-    public boolean deleteProfessor(String id) {
+    public boolean deleteProfessor(int id) {
         String sql = "DELETE FROM professors WHERE id = ?";
 
         try (Connection conn = DataBase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {

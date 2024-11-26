@@ -22,15 +22,15 @@ public class MainView extends JFrame implements StyleAttributes {
     ProfessorView professorView = new ProfessorView(professorsList);
     CourseView courseView = new CourseView(professorsList, studentsList, null);
 
-    this.studentsList.add(new Student("1","Estudante 1", 10, "123"));
-    this.studentsList.add(new Student("2","Estudante 2", 10, "456"));
-    this.studentsList.add(new Student("3","Estudante 3", 10, "789"));
-    this.studentsList.add(new Student("4","Estudante 4", 10, "101"));
+    this.studentsList.add(new Student(1,"Estudante 1", 10, "123"));
+    this.studentsList.add(new Student(2,"Estudante 2", 10, "456"));
+    this.studentsList.add(new Student(3,"Estudante 3", 10, "789"));
+    this.studentsList.add(new Student(4,"Estudante 4", 10, "101"));
 
-    this.professorsList.add(new Professor("1", "Professor 1", 20, "Matemática", "123"));
-    this.professorsList.add(new Professor("2", "Professor 2", 20, "Física", "456"));
-    this.professorsList.add(new Professor("3","Professor 3", 20, "Biologia", "789"));
-    this.professorsList.add(new Professor("4","Professor 4", 20, "Artes", "101"));
+    this.professorsList.add(new Professor(1, "Professor 1", 20, "Matemática", "123"));
+    this.professorsList.add(new Professor(2, "Professor 2", 20, "Física", "456"));
+    this.professorsList.add(new Professor(3,"Professor 3", 20, "Biologia", "789"));
+    this.professorsList.add(new Professor(4,"Professor 4", 20, "Artes", "101"));
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 

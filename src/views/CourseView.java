@@ -4,6 +4,9 @@ import javax.swing.*;
 
 import src.models.Student;
 import src.models.Professor;
+import src.controllers.CourseController;
+import src.controllers.ProfessorController;
+import src.controllers.StudentController;
 import src.models.Course;
 
 import java.awt.*;
@@ -11,11 +14,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseView extends JFrame implements StyleAttributes {
+    private CourseController courseController = new CourseController();
+    private ProfessorController professorController = new ProfessorController();
+    private StudentController studentController = new StudentController();
+
     private List<Professor> professorsList;
     private List<Student> studentsList;
     private List<Course> coursesList;
 
     private JPanel coursesScrollablePanel;
+
+    public CourseView() {
+        this.professorsList = this.professorController.getAllProfessors();
+        this.studentsList = this.studentController.getAllStudents();
+        this.coursesList = this.courseController.getAllCourses();
+    }
+
+    public CourseView(List<Course> coursesList) {
+        this.professorsList = this.professorController.getAllProfessors();
+        this.studentsList = this.studentController.getAllStudents();
+        this.coursesList = coursesList;
+    }
 
     public CourseView(List<Professor> professorsList, List<Student> studentsList, List<Course> coursesList) {
         this.professorsList = professorsList != null ? professorsList : new ArrayList<>();
@@ -141,6 +160,8 @@ public class CourseView extends JFrame implements StyleAttributes {
             Course newCourse = new Course(courseName, courseLoad, selectedProfessor);
             coursesList.add(newCourse);
 
+            this.courseController.addCourse(newCourse);
+
             JPanel coursePanel = createEditableCoursePanel(newCourse);
             coursesScrollablePanel.add(coursePanel);
 
@@ -260,6 +281,7 @@ public class CourseView extends JFrame implements StyleAttributes {
         JButton removeButton = new JButton("Remover");
         removeButton.addActionListener(e -> {
             coursesList.remove(course);
+            this.courseController.deleteCourse(course.getId());
             coursesScrollablePanel.remove(coursePanel);
             coursesScrollablePanel.revalidate();
             coursesScrollablePanel.repaint();

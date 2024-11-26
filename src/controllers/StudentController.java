@@ -19,7 +19,7 @@ public class StudentController {
 
             while (resultSet.next()) {
                 Student student = new Student(
-                        resultSet.getString("id"),
+                        resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getInt("age"),
                         resultSet.getString("registration")
@@ -41,7 +41,7 @@ public class StudentController {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new Student(
-                            resultSet.getString("id"),
+                            resultSet.getInt("id"),
                             resultSet.getString("name"),
                             resultSet.getInt("age"),
                             resultSet.getString("registration")
@@ -78,7 +78,7 @@ public class StudentController {
             statement.setString(1, student.getName());
             statement.setInt(2, student.getAge());
             statement.setString(3, student.getRegistration());
-            statement.setString(4, student.getId());
+            statement.setInt(4, student.getId());
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {

@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import src.models.Professor;
 
+import src.controllers.ProfessorController;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,9 +18,11 @@ public class ProfessorView extends JFrame implements StyleAttributes {
   private JPanel professorsScrollablePanel;
   private JScrollPane professorsScrollPane;
   
-  List<Professor> professorsList = new ArrayList<>();
+  private ProfessorController professorController = new ProfessorController();
 
-  Set<String> specialties = new HashSet<>();
+  private List<Professor> professorsList = professorController.getAllProfessors();
+
+  private Set<String> specialties = new HashSet<>();
 
   public ProfessorView(List<Professor> professorsList) {
     this.professorsList = professorsList;
@@ -124,19 +128,21 @@ public class ProfessorView extends JFrame implements StyleAttributes {
       for (Component component : professorsScrollablePanel.getComponents()) {          
 
           if (component instanceof JPanel) {
-              JPanel professorItemPanel = (JPanel) component;
-      
-              JTextField nameField = (JTextField) professorItemPanel.getComponent(1);
-              JTextField ageField = (JTextField) professorItemPanel.getComponent(3);
-              JTextField registrationField = (JTextField) professorItemPanel.getComponent(5);
-              
-      
-              int index = professorsScrollablePanel.getComponentZOrder(professorItemPanel);
-              Professor professor = professorsList.get(index);
-      
-              professor.setName(nameField.getText());
-              professor.setAge(Integer.parseInt(ageField.getText()));
-              professor.setRegistration(registrationField.getText());
+            JPanel professorItemPanel = (JPanel) component;
+    
+            JTextField nameField = (JTextField) professorItemPanel.getComponent(1);
+            JTextField ageField = (JTextField) professorItemPanel.getComponent(3);
+            JTextField registrationField = (JTextField) professorItemPanel.getComponent(5);
+            
+    
+            int index = professorsScrollablePanel.getComponentZOrder(professorItemPanel);
+            Professor professor = professorsList.get(index);              
+    
+            professor.setName(nameField.getText());
+            professor.setAge(Integer.parseInt(ageField.getText()));
+            professor.setRegistration(registrationField.getText());
+
+            this.professorController.updateProfessor(professor);
           }
       }
           JOptionPane.showMessageDialog(modal, "Alterações salvas com sucesso!");
@@ -184,6 +190,8 @@ public class ProfessorView extends JFrame implements StyleAttributes {
 
     if(isNameValid && isAgeValid && isRegistrationValid && isSpecialtyValid) {
       Professor newProfessor = new Professor(professorToAddName, Integer.parseInt(professorToAddAge), professorToAddSpecialty, professorToAddRegistration);
+
+      this.professorController.addProfessor(newProfessor);
 
       this.professorsList.add(newProfessor);
 
@@ -322,6 +330,7 @@ public class ProfessorView extends JFrame implements StyleAttributes {
           
             JTextField nameField = (JTextField) professorItemPanel.getComponent(1);
 
+            this.professorController.deleteProfessor(professor.getId());
           
             if (nameField.getText().equals(professor.getName())) {
                 componentToRemove = component;

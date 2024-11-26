@@ -5,14 +5,14 @@ CREATE DATABASE school_management;
 CREATE TABLE student (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    age VARCHAR(200) NOT NULL,
+    age INT NOT NULL,
     registration VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE professor (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    age VARCHAR(200) NOT NULL,
+    age INT NOT NULL,
     specialty VARCHAR(255) NOT NULL
 );
 
@@ -31,7 +31,7 @@ CREATE TABLE matricula_student (
 );
 
 --
-CREATE OR REPLACE FUNCTION InsertStudents(new_nome VARCHAR(255), new_idade VARCHAR(200), new_matricula VARCHAR(20)) RETURNS VOID AS $vai$
+CREATE OR REPLACE FUNCTION InsertStudents(new_nome VARCHAR(255), new_idade INT, new_matricula VARCHAR(20)) RETURNS VOID AS $vai$
 DECLARE
     student_id INT;
 BEGIN
@@ -42,7 +42,7 @@ END;
 $vai$ LANGUAGE plpgsql;
 
 --
-CREATE OR REPLACE FUNCTION InsertTeacher(new_nome VARCHAR(255), new_idade VARCHAR(200), new_especialidade VARCHAR(255)) RETURNS VOID AS $vai$
+CREATE OR REPLACE FUNCTION InsertTeacher(new_nome VARCHAR(255), new_idade INT, new_especialidade VARCHAR(255)) RETURNS VOID AS $vai$
 BEGIN
     INSERT INTO professor (name, specialty, age) VALUES (new_nome, new_especialidade, new_idade) RETURNING id INTO teacher_id;
 
@@ -213,3 +213,62 @@ BEGIN
     END IF;
 END;
 $vai$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetStudentsByCourse(p_course_id INT)
+RETURNS TABLE(student_id INT, student_name VARCHAR, student_age INT, student_registration VARCHAR) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.id AS student_id,
+        s.name AS student_name,
+        s.age AS student_age,
+        s.registration AS student_registration
+    FROM 
+        student s
+    INNER JOIN 
+        matricula_student ms ON s.id = ms.student_id
+    WHERE 
+        ms.course_id = p_course_id;
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllStudents(stundent_id INT)
+RETURNS TABLE(student_id INT, student_name VARCHAR, student_age INT, student_registration VARCHAR) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        id AS student_id,
+        name AS student_name,
+        age AS student_age,
+        registration AS student_registration
+    FROM 
+        student;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetProfessorByCourse(p_course_id INT)
+RETURNS TABLE(
+    professor_id INT,
+    professor_name VARCHAR,
+    professor_age INT,
+    professor_specialty VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        p.id AS professor_id,
+        p.name AS professor_name,
+        p.age AS professor_age,
+        p.specialty AS professor_specialty
+    FROM 
+        professor p
+    INNER JOIN 
+        course c ON c.professor_id = p.id
+    WHERE 
+        c.id = p_course_id;
+
+    -- Retorno vazio se nenhum professor estiver associado ao curso
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
